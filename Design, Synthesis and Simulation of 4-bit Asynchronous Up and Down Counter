@@ -1,0 +1,90 @@
+module async_downc (
+    input clk,
+    input rst,
+    output reg [3:0] Count
+);
+
+always @(negedge clk or posedge rst) begin
+
+    if (rst)
+        Count <= 4'd9;
+
+    else if (Count == 4'd0)
+        Count <= 4'd9;
+
+    else
+        Count <= Count - 4'd1;
+
+end
+
+endmodule
+
+module tb_async_downc;
+
+reg Clk, rst;
+wire [3:0] Count;
+
+async_downc uut (
+    .clk(Clk),
+    .rst(rst),
+    .Count(Count)
+);
+
+initial begin
+    Clk = 0;
+    forever #5 Clk = ~Clk;
+end
+
+initial begin
+    rst = 1;
+    #10 rst = 0;
+    #100 $finish;
+end
+
+endmodule
+
+module async_counter (
+    input clk,
+    input rstn,
+    output reg [3:0] Count
+);
+
+always @(negedge clk or negedge rstn) begin
+
+    if (!rstn)
+        Count <= 4'b0000;
+
+    else if (Count == 4'd9)
+        Count <= 4'b0000;
+
+    else
+        Count <= Count + 1;
+
+end
+
+endmodule
+
+module tb_async_counter;
+
+reg Clk, rstn;
+wire [3:0] Count;
+
+async_counter uut (
+    .clk(Clk),
+    .rstn(rstn),
+    .Count(Count)
+);
+
+initial begin
+    Clk = 0;
+    forever #5 Clk = ~Clk;
+end
+
+initial begin
+    rstn = 0;
+    #12 rstn = 1;
+    #200 $finish;
+end
+
+endmodule
+
