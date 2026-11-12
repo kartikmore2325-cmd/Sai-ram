@@ -1,0 +1,42 @@
+Full Adder – Verilog
+module full_adder (
+ input a,
+ input b,
+ input cin,
+ output sum,
+ output cout
+);
+ assign sum = a ^ b ^ cin;
+ assign cout = (a & b) | (cin & (a ^ b));
+endmodule
+4-bit Ripple Carry Adder – Verilog
+module ripple_carry_adder_4bit (
+ input [3:0] A,
+ input [3:0] B,
+ input Cin,
+ output [3:0] Sum,
+ output Cout
+);
+ wire c1, c2, c3;
+ full_adder FA0 (A[0], B[0], Cin, Sum[0], c1);
+ full_adder FA1 (A[1], B[1], c1, Sum[1], c2);
+ full_adder FA2 (A[2], B[2], c2, Sum[2], c3);
+ full_adder FA3 (A[3], B[3], c3, Sum[3], Cout);
+endmodule
+
+Test bench (Verilog example) 
+module tb_rca;
+ reg [3:0] A, B;
+ reg Cin;
+ wire [3:0] Sum;
+ wire Cout;
+ ripple_carry_adder_4bit DUT (A, B, Cin, Sum, Cout);
+ initial begin
+ A = 4'b0000; B = 4'b0000; Cin = 0;
+ #10 A = 4'b0011; B = 4'b0101;
+ #10 A = 4'b1111; B = 4'b0001;
+ #10 A = 4'b1010; B = 4'b0101;
+ #10 $finish;
+ end
+endmodule
+
