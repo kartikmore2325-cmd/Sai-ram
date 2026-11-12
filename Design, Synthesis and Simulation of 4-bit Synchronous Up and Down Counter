@@ -1,0 +1,76 @@
+module tb_sync_down;
+
+reg clk, rst;
+wire [3:0] Count;
+
+sync_down DUT (clk, rst, Count);
+
+initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+end
+
+initial begin
+    rst = 1;
+    #10 rst = 0;
+    #200 $finish;
+end
+
+endmodule
+
+module sync_down (
+    input clk,
+    input rst,
+    output reg [3:0] Count
+);
+
+always @(posedge clk) begin
+
+    if (rst)
+        Count <= 4'b1111;
+
+    else
+        Count <= Count - 1'b1;
+
+end
+
+endmodule
+
+module tb_sync_up;
+
+reg clk, rst;
+wire [3:0] Count;
+
+sync_up DUT (clk, rst, Count);
+
+initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+end
+
+initial begin
+    rst = 1;
+    #10 rst = 0;
+    #200 $finish;
+end
+
+endmodule
+
+module sync_up (
+    input clk,
+    input rst,
+    output reg [3:0] Count
+);
+
+always @(posedge clk) begin
+
+    if (rst)
+        Count <= 4'b0000;
+
+    else
+        Count <= Count + 1'b1;
+
+end
+
+endmodule
+
