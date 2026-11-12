@@ -1,0 +1,103 @@
+module single_port_ram_tb;
+
+reg clk;
+reg we;
+reg [5:0] addr;
+reg [7:0] data;
+
+wire [7:0] q;
+
+single_port_ram SUT (
+    .clk(clk),
+    .we(we),
+    .addr(addr),
+    .data(data),
+    .q(q)
+);
+
+initial begin
+    clk = 1'b1;
+    forever #50 clk = ~clk;
+end
+
+initial begin
+
+    data = 8'h01;
+    addr = 6'd0;
+    we = 1'b1;
+    #100;
+
+    data = 8'h02;
+    addr = 6'd1;
+    #100;
+
+    data = 8'h03;
+    addr = 6'd2;
+    #100;
+
+    addr = 6'd0;
+    we = 1'b0;
+    #100;
+
+    addr = 6'd1;
+    #100;
+
+    addr = 6'd2;
+    #100;
+
+    $finish;
+
+end
+
+endmodule
+
+module rom (
+    input [3:0] addr,
+    output reg [7:0] data
+);
+
+always @(*) begin
+
+    case(addr)
+
+        4'b0000: data = 8'h11;
+        4'b0001: data = 8'h22;
+        4'b0010: data = 8'h33;
+        4'b0011: data = 8'h44;
+        4'b0100: data = 8'h55;
+        4'b0101: data = 8'h66;
+        4'b0110: data = 8'h77;
+        4'b0111: data = 8'h88;
+
+        default: data = 8'h00;
+
+    endcase
+
+end
+
+endmodule
+
+module single_port_ram (
+    input clk,
+    input we,
+    input [5:0] addr,
+    input [7:0] data,
+    output [7:0] q
+);
+
+reg [7:0] ram [63:0];
+reg [5:0] addr_reg;
+
+always @(posedge clk) begin
+
+    if (we)
+        ram[addr] <= data;
+
+    else
+        addr_reg <= addr;
+
+end
+
+assign q = ram[addr_reg];
+
+endmodule
